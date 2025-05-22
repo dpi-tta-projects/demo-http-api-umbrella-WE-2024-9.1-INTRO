@@ -1,6 +1,8 @@
-require "http"
-require "dotenv/load"
-require "json"
+# require "http"
+# require "dotenv/load"
+# require "json"
+require_relative "location_service"
+require_relative "weather_service"
 
 # TODO: 
 # Add text: Will you need an umbrella today?
@@ -15,12 +17,22 @@ require "json"
 # Print precipitation chart
 # Display recommendation
 
+puts "========================================"
+puts "    Will you need an umbrella today?"
+puts "========================================"
+puts "Where are you?"
 
-pirate_weather_api_key = ENV.fetch("PIRATE_WEATHER_KEY")
-pirate_weather_url = "https://api.pirateweather.net/forecast/" + pirate_weather_api_key + "/41.8887,-87.6355"
+users_location = gets.chomp
 
-raw_response = HTTP.get(pirate_weather_url)
-parsed_response = JSON.parse(raw_response)
-parsed_response.dig("currently","temperature")
+puts "Let's see what the weather in #{users_location.capitalize}...."
 
-binding.irb
+# querying for location
+location = LocationService.new(users_location).call
+puts location.to_s
+
+# querying for weather
+weather = WeatherService.new(location.lat, location.lng).call
+puts "The current temperature is #{weather.temperature}"
+puts "Next hour: #{weather.hourly_summary}"
+
+# binding.irb
