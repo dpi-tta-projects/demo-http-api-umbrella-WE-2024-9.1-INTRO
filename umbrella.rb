@@ -1,6 +1,4 @@
-# require "http"
-# require "dotenv/load"
-# require "json"
+require "ascii_charts"
 require_relative "location_service"
 require_relative "weather_service"
 
@@ -34,5 +32,11 @@ puts location.to_s
 weather = WeatherService.new(location.lat, location.lng).call
 puts "The current temperature is #{weather.temperature}"
 puts "Next hour: #{weather.hourly_summary}"
+puts AsciiCharts::Cartesian.new(weather.hourly_precipitation(12), :bar => true, :hide_zero => true).draw
+if weather.will_it_rain?(12)
+    puts "You probably need an umbrella."
+else 
+    puts "You probably won't need an umbrella."
+end
 
 # binding.irb

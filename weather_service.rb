@@ -21,10 +21,39 @@ class WeatherService
     @response.dig("currently","temperature")
   end
 
+  def hourly
+    # {"summary": String, "icon": String, "data": Array}
+    @response.fetch("hourly")
+  end
+
   def hourly_summary
-    @response.dig("hourly","summary")
+    hourly.fetch("summary")
   end 
 
+  def hourly_data
+    hourly.fetch("data")
+  end
+
+  # [ [hour, precipitation_probability] ]
+  def hourly_precipitation(num_hours = 48)
+    precip_probability_array = []
+
+    hourly_data.first(num_hours).each_with_index do |hour_hash, index|
+      precip_probability = hour_hash.fetch("precipProbability")
+      precip_probability_integer = (precip_probability * 100).to_i
+      precip_probability_array.push([index, precip_probability_integer])
+    end
+
+    return precip_probability_array
+  end
+
+  def will_it_rain?(num_hours = 48)
+    # if the precip_probability > 0.10
+    # [0, 1, 2].any? {|element| element > 1 } # => true
+    result = hourly_precipitation.first(num_hours).any? {|precip_probability| precip_probability.at(1) > 10 }
+
+    return result
+  end
 
   private
 
