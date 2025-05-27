@@ -70,3 +70,46 @@ https://maps.googleapis.com/maps/api/geocode/json?address=Merchandise%20Mart%20C
 ```
 
 [ascii_charts](https://github.com/benlund/ascii_charts)
+
+## Unix timestamp
+`Unix timestamp` — it represents the number of seconds that have passed since **January 1, 1970 (UTC)**
+
+```ruby
+Time.at(1747879200) # => 2025-07-21 12:00:00 -0500
+```
+
+### 🕰️ The Origin of Unix Time
+Unix time comes from the Unix operating system, which was created in the late 1960s and early 1970s at AT&T Bell Labs by engineers like Ken Thompson, Dennis Ritchie, and others.
+
+### 🧨 Fun Fact: Year 2038 Problem
+Unix time is stored in many systems as a 32-bit signed integer. That maxes out on:
+
+**Tuesday, January 19, 2038, at 03:14:07 UTC**
+
+After that, the number overflows and wraps around to a negative number, causing possible failures — a bit like the Y2K problem. This is called the **Year 2038 problem**, and many systems are already being updated to use 64-bit timestamps to avoid it.
+
+## Error handeling
+
+```ruby
+    if status != "OK" || results.empty?
+      raise ArgumentError, "Location for '#{place_name}' is not found. Try again:"
+    end
+```
+
+`ArgumentError` is a built-in Ruby exception that is raised when a method receives arguments that are incorrect, invalid, or unexpected — either in type, number, or value.
+
+Then wrap your code in the loop:
+```ruby
+location = nil
+
+loop do
+    users_location = gets.chomp
+
+    begin
+        # querying for location
+        break
+    rescue ArgumentError => e
+        puts "#{e.message}"
+    end
+end
+```
