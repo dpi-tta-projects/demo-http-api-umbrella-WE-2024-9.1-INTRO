@@ -5,6 +5,11 @@ require "json"
 class LocationService
   attr_reader :lat, :lng, :place_name
 
+  API_STATUSES = {
+    ok: "OK",
+    zero_results: "ZERO_RESULTS"
+  }
+
   def initialize(place_name)
     @place_name = place_name
   end
@@ -14,7 +19,19 @@ class LocationService
     response = JSON.parse(raw)
 
     results = response.fetch("results")
-    location = results.first.dig("geometry", "location")
+    status = response.fetch("status")
+
+    if status == API_STATUSES[:zero_results]
+      raise ArgumentError, "Location for '#{place_name}' is not found. Try again:"
+    end
+
+    result = results.first
+
+    # TODO: rescue KeyError: key not found
+    geometry = result.fetch("geometry")
+
+    # TODO: rescue KeyError: key not found
+    location = geometry.fetch("location")
     
     @lat = location["lat"]
     @lng = location["lng"]

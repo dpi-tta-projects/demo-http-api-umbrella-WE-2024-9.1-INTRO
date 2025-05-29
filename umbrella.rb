@@ -20,18 +20,33 @@ puts "    Will you need an umbrella today?"
 puts "========================================"
 puts "Where are you?"
 
-users_location = gets.chomp
-
-puts "Let's see what the weather in #{users_location.capitalize}...."
+location = nil
 
 # querying for location
-location = LocationService.new(users_location).call
-puts location.to_s
+loop do
+    users_location = gets.chomp
+
+    begin
+        puts "Let's see what the weather in #{users_location.capitalize}...."
+        # TODO: handle ZeroResultsError
+        location = LocationService.new(users_location).call
+        puts location.to_s
+
+        break
+    rescue ArgumentError => e
+        puts "Invalid argument: #{e.message}"
+    rescue StandardError => e
+        puts "Oops! #{e.message}"
+    end
+end
+
 
 # querying for weather
 weather = WeatherService.new(location.lat, location.lng).call
 puts "The current temperature is #{weather.temperature}"
 puts "Next hour: #{weather.hourly_summary}"
+# puts weather.pirate_weather_url
+weather.time
 puts AsciiCharts::Cartesian.new(weather.hourly_precipitation(12), :bar => true, :hide_zero => true).draw
 if weather.will_it_rain?(12)
     puts "You probably need an umbrella."

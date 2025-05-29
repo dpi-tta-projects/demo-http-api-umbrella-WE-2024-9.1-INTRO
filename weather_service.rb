@@ -34,6 +34,17 @@ class WeatherService
     hourly.fetch("data")
   end
 
+  def time
+    next_hour_data = hourly_data[1..12]
+
+    next_hour_data.each do |hour_hash|
+      hour = hour_hash.fetch("time")
+      precip_probability = hour_hash.fetch("precipProbability")
+      next_hour = ((Time.at(hour) - Time.now) / 60 /60).round + 1
+      puts "In #{next_hour} hours, there is a #{(precip_probability * 100).to_i}% chance of precipitation."
+    end
+  end
+
   # [ [hour, precipitation_probability] ]
   def hourly_precipitation(num_hours = 48)
     precip_probability_array = []
